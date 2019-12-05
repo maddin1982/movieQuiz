@@ -12,6 +12,7 @@ const db = low(adapter);
 
 app.use(fileUpload());
 app.use(express.static('public'));
+app.use('/images', express.static('images'));
 
 app.post('/upload', function(req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -29,17 +30,20 @@ app.post('/upload', function(req, res) {
     req.files[file].mv(__dirname + '/images/' + lastIndex + '_' +filmName + '.jpg', function(err) {
       if (err)
         return res.status(500).send(err);
-
     });
   }
 
 
 // Increment count
-
   db.get('movies').push({'id':lastIndex, 'movies' : movies}).write();
   db.set('lastIndex', lastIndex).write();
 
   res.redirect('/');
+});
+
+
+app.get('/movies', function(req, res) {
+  res.json(db.get('movies'));
 });
 
 
