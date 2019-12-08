@@ -29,6 +29,15 @@
             margin-top: 10px;
         }
     </style>
+    <script src="assets/jquery_min.js"></script>
+    <script src="assets/formvalidate_min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        $.validate({
+          lang: 'de'
+        });
+      });
+    </script>
 </head>
 <body>
 <form ref='uploadForm'
@@ -39,20 +48,20 @@
 
     <div class="form__block">
         <label for="file1_name">Film A: </label>
-        <input id="file1_name" type="text" name="file1_name"/>
-        <input type="file" name="file1"/>
+        <input data-validation="required" id="file1_name" type="text" name="file1_name"/>
+        <input data-validation-max-size="2000kb" data-validation="required" type="file" name="file1"/>
     </div>
 
     <div class="form__block">
         <label for="file2_name">Film B: </label>
-        <input id="file2_name" type="text" name="file2_name"/>
-        <input type="file" name="file2"/>
+        <input id="file2_name" data-validation-depends-on="file2" type="text" name="file2_name"/>
+        <input data-validation-max-size="2000kb"  type="file" name="file2"/>
     </div>
 
     <div class="form__block">
         <label for="file3_name">Film C: </label>
-        <input id="file3_name" type="text" name="file3_name"/>
-        <input type="file" name="file3"/>
+        <input data-validation-depends-on="file3" id="file3_name" type="text" name="file3_name"/>
+        <input data-validation-max-size="2000kb"  type="file" name="file3"/>
     </div>
     <button type='submit'>Upload</button>
 </form>

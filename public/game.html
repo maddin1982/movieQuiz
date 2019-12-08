@@ -1,0 +1,31 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="assets/jquery_min.js"></script>
+    <script src="game.js"></script>
+</head>
+<body>
+    <div id="START_state">
+        Filmquiz
+        <button class="start-button">new Game</button>
+    </div>
+    <div id="TITLE_state">
+        <div class="movie-title"><span id="movie"></span></div>
+    </div>
+    <div id="IMAGES_state">
+        <div class="images">
+            <div class="image"><img id="image1"></div>
+            <div class="image"><img id="image2"></div>
+            <div class="image"><img id="image3"></div>
+        </div>
+    </div>
+    <div id="WINNER_state">
+        and the winner is <span id="winner"></span>
+        <button class="start-button">new Game</button>
+    </div>
+
+    <div class="points">
+        <div class="points_player1"> player1: <span id="player1_points"></span></div>
+        <div class="points_player2"> player2: <span id="player2_points"></span></div>
+</body>
+</html>

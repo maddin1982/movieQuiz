@@ -1,7 +1,11 @@
 const port = 3000;
+let cors = require('cors');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
+
+//todo: check cors
+app.use(cors())
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -44,6 +48,32 @@ app.post('/upload', function(req, res) {
 
 app.get('/movies', function(req, res) {
   res.json(db.get('movies'));
+});
+
+let getRandomMovie = (maxId, exceptTheseIds)=> {
+
+  // todo: implement exceptTheseIds
+  const randomId = 1 + Math.floor(Math.random() * maxId);
+
+  let movie =  db.get('movies')
+  .filter({id: randomId})
+  .value()[0];
+
+  // todo: implement randomness
+  return {
+    'title' : movie.movies[0],
+    'image1' : movie.id + '_' + movie.movies[0],
+    'image2' : movie.id + '_' + movie.movies[0],
+    'image3' : movie.id + '_' + movie.movies[0],
+    'answer' : 1
+  }
+};
+
+
+app.get('/getRandomMovie', function(req,res){
+  const movies_length = db.get('movies').size().value();
+  let movie = getRandomMovie(movies_length);
+  res.json(movie);
 });
 
 
