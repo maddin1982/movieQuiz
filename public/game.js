@@ -8,6 +8,8 @@
  * @property {Number} answer - the correct image
  */
 
+const winningPoints = 3;
+
 const states = {
   'START': 1,
   'TITLE': 2,
@@ -27,11 +29,8 @@ let points = {
 let currentMovie = null;
 
 
-
-
 let setStateVisibility = () => {
   Object.keys(states).forEach((state) => {
-    console.log('state')
     if(states[state] === currentState){
       $('#'+state + '_state').show()
     }
@@ -43,29 +42,31 @@ let setStateVisibility = () => {
 
 let setState = (state) => {
   currentState = state;
+
   setStateVisibility();
 
-  // START
-  if(state === states['START']){
-    updatePoints(0,0);
-  }
-
-  // TITLE
-  if(state === states['TITLE']) {
-    setTimeout(() => {
-      setState(states['IMAGES'])
-    }, 2000);
+  switch (state) {
+    case states.START:
+      points.player1 = 0;
+      points.player2  = 0;
+      updatePoints();
+      break;
+    case states.TITLE:
+      setTimeout(() => {
+        setState(states['IMAGES'])
+      }, 2000);
+      break;
+    case states.WINNER:
+      document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'player 1' : "player 2";
+      break;
   }
 };
 
 /**
  * update points
- * @param {Number} points_player1
- * @param {Number} points_player2
  */
-let updatePoints = (points_player1, points_player2) => {
-  points.player1 = points_player1;
-  points.player2  = points_player2;
+let updatePoints = () => {
+
   document.getElementById('player1_points').innerHTML = points.player1;
   document.getElementById('player2_points').innerHTML = points.player2;
 };
@@ -77,7 +78,7 @@ let updatePoints = (points_player1, points_player2) => {
 let updateMovie = (movie) => {
   console.log('new Movie', movie);
   currentMovie = movie;
-  document.getElementById('movie').innerHTML = movie.title;
+  document.getElementById('movie').innerHTML = movie.title.split('_').join(' ');
   document.getElementById('image1').setAttribute('src','http://localhost:3000/images/' + movie.image1 + '.jpg');
   document.getElementById('image2').setAttribute('src','http://localhost:3000/images/' + movie.image2 + '.jpg');
   document.getElementById('image3').setAttribute('src','http://localhost:3000/images/' + movie.image3 + '.jpg');
@@ -92,22 +93,43 @@ document.addEventListener("DOMContentLoaded", function() {
   setState(states.START);
 
   // stet interactions
-  document.querySelector('.start-button').addEventListener('click', () => {
+  document.querySelectorAll('.start-button').forEach((button)=> button.addEventListener('click', () => {
+    setState(states.START);
     getNewMovie();
-  });
+  }));
 
   document.addEventListener('keypress', (e) => {
-      let keysPlayer1 = ['Digit1', 'Digit2',  'Digit3'];
-      let keysPlayer2 = ['Digit4', 'Digit5', 'Digit6'];
-      let key = e.code;
+      if(currentState === states.IMAGES){
+        const keysPlayer1 = ['Digit1', 'Digit2',  'Digit3'];
+        const keysPlayer2 = ['Digit4', 'Digit5', 'Digit6'];
 
-      if(keysPlayer1.indexOf(e.code) + 1 === currentMovie.answer) {
-        updatePoints(points.player1 + 1, points.player2)
+        // player one hit button
+        if(keysPlayer1.indexOf(e.code) !== -1) {
+          if(keysPlayer1.indexOf(e.code) + 1 === currentMovie.answer) {
+            points.player1++;
+          }else{
+            points.player2++;
+          }
+        }
+        else {
+          // player two hit button
+          if(keysPlayer2.indexOf(e.code) + 1 === currentMovie.answer) {
+            points.player2++;
+          }
+          else{
+            points.player1++;
+          }
+        }
+        updatePoints();
+        if(points.player1 >= winningPoints || points.player2 >= winningPoints){
+          setState(states.WINNER)
+        } else{
+          getNewMovie();
+        }
+
       }
-      if(keysPlayer2.indexOf(e.code) + 1 === currentMovie.answer) {
-        updatePoints(points.player1, points.player2 + 1)
-      }
-      getNewMovie();
+
+
   });
 
 

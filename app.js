@@ -5,7 +5,7 @@ const fileUpload = require('express-fileupload');
 const app = express();
 
 //todo: check cors
-app.use(cors())
+app.use(cors());
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -28,7 +28,7 @@ app.post('/upload', function(req, res) {
 
   for(let file in req.files) {
     let filmName = req.body[file + '_name'];
-
+    filmName = filmName.split(' ').join('_');
     movies.push(filmName);
 
     req.files[file].mv(__dirname + '/images/' + lastIndex + '_' +filmName + '.jpg', function(err) {
@@ -37,11 +37,9 @@ app.post('/upload', function(req, res) {
     });
   }
 
-
 // Increment count
   db.get('movies').push({'id':lastIndex, 'movies' : movies}).write();
   db.set('lastIndex', lastIndex).write();
-
   res.redirect('/');
 });
 
@@ -50,30 +48,60 @@ app.get('/movies', function(req, res) {
   res.json(db.get('movies'));
 });
 
-let getRandomMovie = (maxId, exceptTheseIds)=> {
+app.get('/movieNames', function(req, res) {
+  res.json(db.get('movies').map((movieGroup)=> {return movieGroup.movies}));
+});
 
-  // todo: implement exceptTheseIds
-  const randomId = 1 + Math.floor(Math.random() * maxId);
 
-  let movie =  db.get('movies')
+let getRandomMovieGroup = (maxId, exceptTheseIds)=> {
+  let randomId =0;
+  if(maxId>3){
+    // todo: implement exceptTheseIds
+    exceptTheseIds = exceptTheseIds || [];
+    randomId = null;
+    while(exceptTheseIds.indexOf(randomId)!== -1 || !randomId){
+      randomId = 1 + Math.floor(Math.random() * maxId);
+    }
+  }
+
+  return db.get('movies')
   .filter({id: randomId})
   .value()[0];
-
-  // todo: implement randomness
-  return {
-    'title' : movie.movies[0],
-    'image1' : movie.id + '_' + movie.movies[0],
-    'image2' : movie.id + '_' + movie.movies[0],
-    'image3' : movie.id + '_' + movie.movies[0],
-    'answer' : 1
-  }
 };
 
 
 app.get('/getRandomMovie', function(req,res){
-  const movies_length = db.get('movies').size().value();
-  let movie = getRandomMovie(movies_length);
-  res.json(movie);
+  const movieGroups_length = db.get('movies').size().value();
+  let movie = getRandomMovieGroup(movieGroups_length);
+  // todo: implement randomness
+
+  let image1 = movie.movies[0];
+  let image2 = movie.movies[1];
+  let image3 = movie.movies[2];
+
+  let imageGroupId1 = movie.id;
+  let imageGroupId2 = movie.id;
+  let imageGroupId3 = movie.id;
+
+  if(image2 === undefined){
+    let randomImageGroup = getRandomMovieGroup(movieGroups_length, [movie.id]);
+    image2 = randomImageGroup.movies[0];
+    imageGroupId2 = randomImageGroup.id;
+  }
+  if(image3 === undefined){
+    let randomImageGroup = getRandomMovieGroup(movieGroups_length, [movie.id]);
+    image3 = randomImageGroup.movies[0];
+    imageGroupId3 = randomImageGroup.id;
+  }
+
+  let movieJson =  {
+    'title' : movie.movies[0],
+    'image1' : imageGroupId1 + '_' + image1,
+    'image2' : imageGroupId2 + '_' + image2,
+    'image3' : imageGroupId3 + '_' + image3,
+    'answer' : 1
+  };
+  res.json(movieJson);
 });
 
 

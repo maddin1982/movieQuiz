@@ -32,10 +32,19 @@
     <script src="assets/jquery_min.js"></script>
     <script src="assets/formvalidate_min.js"></script>
     <script>
+
+      let showCurrentMovies = () => {
+          $.getJSON( "http://localhost:3000/getRandomMovie", (result) => {
+          })
+      };
+
       document.addEventListener("DOMContentLoaded", function() {
         $.validate({
           lang: 'de'
         });
+
+        showCurrentMovies();
+
       });
     </script>
 </head>
