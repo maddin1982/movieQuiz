@@ -3,6 +3,7 @@ let cors = require('cors');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
+const fs = require('fs');
 
 //todo: check cors
 app.use(cors());
@@ -13,6 +14,13 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 //db.defaults({ movies: [] }).write();
+
+db._.mixin({
+  getRandom: function(array, exceptTheseIds) {
+    let filteredArray = array.filter(item => exceptTheseIds.indexOf(item.id) === -1);
+    return filteredArray[Math.floor(Math.random() * (filteredArray.length-1))]
+  }
+});
 
 app.use(fileUpload());
 app.use(express.static('public'));
@@ -53,28 +61,41 @@ app.get('/movieNames', function(req, res) {
 });
 
 
-let getRandomMovieGroup = (maxId, exceptTheseIds)=> {
-  let randomId =0;
-  if(maxId>3){
-    // todo: implement exceptTheseIds
-    exceptTheseIds = exceptTheseIds || [];
-    randomId = null;
-    while(exceptTheseIds.indexOf(randomId)!== -1 || !randomId){
-      randomId = 1 + Math.floor(Math.random() * maxId);
-    }
-  }
-
+let getRandomMovieGroup = (exceptTheseIds) => {
   return db.get('movies')
-  .filter({id: randomId})
-  .value()[0];
+  .filter((item) => exceptTheseIds.indexOf(item.id) === -1)
+  .sample()
+  .value();
 };
 
+app.get('/deleteMovie', function(req, res) {
+  //db.set('lastIndex', lastIndex).write();
+  let deletedMovieGroup = db.get('movies')
+  .remove({ id: parseInt(req.query.id) })
+  .write();
+
+  if(deletedMovieGroup && deletedMovieGroup.length>0){
+    deletedMovieGroup[0].movies.forEach(movie => {
+      const path = __dirname +'/images/'+ deletedMovieGroup[0].id + '_' + movie + '.jpg';
+        fs.unlink(path, (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        } else {
+          console.log('removed file', path)
+        }
+      })
+    })
+  }
+
+  res.redirect('/');
+});
 
 app.get('/getRandomMovie', function(req,res){
-  const movieGroups_length = db.get('movies').size().value();
-  let movie = getRandomMovieGroup(movieGroups_length);
-  // todo: implement randomness
+  //const movieGroups_length = db.get('movies').size().value();
+  let movie = getRandomMovieGroup([]);
 
+  // try to set all 3 movies from first moviegroup
   let image1 = movie.movies[0];
   let image2 = movie.movies[1];
   let image3 = movie.movies[2];
@@ -83,16 +104,21 @@ app.get('/getRandomMovie', function(req,res){
   let imageGroupId2 = movie.id;
   let imageGroupId3 = movie.id;
 
+  // in case second movie is not set
   if(image2 === undefined){
-    let randomImageGroup = getRandomMovieGroup(movieGroups_length, [movie.id]);
-    image2 = randomImageGroup.movies[0];
+    let randomImageGroup = getRandomMovieGroup([imageGroupId1]);
+    image2 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
     imageGroupId2 = randomImageGroup.id;
   }
+
+  // in case third movie is not set
   if(image3 === undefined){
-    let randomImageGroup = getRandomMovieGroup(movieGroups_length, [movie.id]);
-    image3 = randomImageGroup.movies[0];
+    let randomImageGroup = getRandomMovieGroup([imageGroupId1,imageGroupId2]);
+    image3 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
     imageGroupId3 = randomImageGroup.id;
   }
+
+  //todo: mix this up so that movie 1 isn't always the right one
 
   let movieJson =  {
     'title' : movie.movies[0],
