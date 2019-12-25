@@ -15,12 +15,6 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 //db.defaults({ movies: [] }).write();
 
-db._.mixin({
-  getRandom: function(array, exceptTheseIds) {
-    let filteredArray = array.filter(item => exceptTheseIds.indexOf(item.id) === -1);
-    return filteredArray[Math.floor(Math.random() * (filteredArray.length-1))]
-  }
-});
 
 app.use(fileUpload());
 app.use(express.static('public'));
@@ -120,13 +114,19 @@ app.get('/getRandomMovie', function(req,res){
 
   //todo: mix this up so that movie 1 isn't always the right one
 
+  // get random number between 1 and 3
+  let rand = Math.floor(Math.random()*3) + 1;
+
   let movieJson =  {
     'title' : movie.movies[0],
-    'image1' : imageGroupId1 + '_' + image1,
-    'image2' : imageGroupId2 + '_' + image2,
-    'image3' : imageGroupId3 + '_' + image3,
-    'answer' : 1
+    'answer' : rand
   };
+
+  movieJson['image' + rand] = imageGroupId1 + '_' + image1;
+  movieJson['image' + ((rand)%3+ 1)] = imageGroupId2 + '_' + image2;
+  movieJson['image' + ((rand+1)%3 +1)] = imageGroupId3 + '_' + image3;
+
+  console.log(movieJson)
   res.json(movieJson);
 });
 
