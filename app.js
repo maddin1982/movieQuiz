@@ -126,7 +126,6 @@ app.get('/getRandomMovie', function(req,res){
   movieJson['image' + ((rand)%3+ 1)] = imageGroupId2 + '_' + image2;
   movieJson['image' + ((rand+1)%3 +1)] = imageGroupId3 + '_' + image3;
 
-  console.log(movieJson)
   res.json(movieJson);
 });
 

@@ -76,7 +76,6 @@ let updatePoints = () => {
  * @param {Movie} movie - the new movie
  */
 let updateMovie = (movie) => {
-  console.log('new Movie', movie);
   currentMovie = movie;
   document.getElementById('movie').innerHTML = movie.title.split('_').join(' ');
   document.getElementById('image1').setAttribute('src','http://localhost:3000/images/' + movie.image1 + '.jpg');
