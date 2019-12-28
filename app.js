@@ -4,6 +4,13 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const app = express();
 const fs = require('fs');
+const basicAuth = require('express-basic-auth');
+
+app.use(basicAuth({
+  users: { 'kazoosh': 'phase4quiz' },
+  challenge: true,
+  realm: 'Imb4T3st4pp'
+}));
 
 //todo: check cors
 app.use(cors());
