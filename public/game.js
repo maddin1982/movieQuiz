@@ -78,14 +78,14 @@ let updatePoints = () => {
 let updateMovie = (movie) => {
   currentMovie = movie;
   document.getElementById('movie').innerHTML = movie.title.split('_').join(' ');
-  document.getElementById('image1').setAttribute('src','http://localhost:3000/images/' + movie.image1 + '.jpg');
-  document.getElementById('image2').setAttribute('src','http://localhost:3000/images/' + movie.image2 + '.jpg');
-  document.getElementById('image3').setAttribute('src','http://localhost:3000/images/' + movie.image3 + '.jpg');
+  document.getElementById('image1').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image1 + '.jpg');
+  document.getElementById('image2').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image2 + '.jpg');
+  document.getElementById('image3').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image3 + '.jpg');
   setState(states['TITLE']);
 };
 
 let getNewMovie = () => {
-  $.getJSON( "http://localhost:3000/getRandomMovie", updateMovie)
+  $.getJSON( "http://173.212.239.184:3000/getRandomMovie", updateMovie)
 };
 
 document.addEventListener("DOMContentLoaded", function() {
