@@ -99,7 +99,7 @@
       };
 
       let keyDownOnInputEventHandler = (e) => {
-        const regex = RegExp('[0-9a-zA-ZüöäÜÖÄ_- ]');
+        const regex = RegExp('[-0-9a-zA-ZüöäÜÖÄ_ ]');
 
         if (!regex.test(e.key) && e.key != 'backspace') {
           e.preventDefault();
