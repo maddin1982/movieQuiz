@@ -98,11 +98,24 @@
           })
       };
 
+      let keyDownOnInputEventHandler = (e) => {
+        const regex = RegExp('[0-9a-zA-ZüöäÜÖÄ_- ]');
+
+        if (!regex.test(e.key) && e.key != 'backspace') {
+          e.preventDefault();
+        }
+      };
+
       document.addEventListener("DOMContentLoaded", function() {
         $.validate({
           lang: 'de'
         });
         showCurrentMovies();
+
+        document.getElementById('file1_name').addEventListener('keydown', keyDownOnInputEventHandler);
+        document.getElementById('file2_name').addEventListener('keydown', keyDownOnInputEventHandler);
+        document.getElementById('file3_name').addEventListener('keydown', keyDownOnInputEventHandler);
+
       });
     </script>
 </head>
