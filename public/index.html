@@ -66,9 +66,12 @@
     <script src="assets/formvalidate_min.js"></script>
     <script>
 
+      //const url = '173.212.239.184';
+      const url = window.location.hostname;
+
       let getMovieMarkup = (movie,groupId) => {
         return `<li class="movie">
-                    <a href="http://localhost:3000/images/${groupId}_${movie}.jpg"><img width="auto" height="100%" src="http://localhost:3000/images/${groupId}_${movie}.jpg"></a>
+                    <a href="http://${url}:3000/images/${groupId}_${movie}.jpg"><img width="auto" height="100%" src="http://${url}:3000/images/${groupId}_${movie}.jpg"></a>
                     <span>${movie.split('_').join(' ')}</span>
                 </li>`;
       };
@@ -76,7 +79,7 @@
       let createAvailableMoviesMarkup = (movieGroup) => {
         return `
         <li class="movie-group">
-            <a class="movie-group__delete" href="http://localhost:3000/deleteMovie?id=${movieGroup.id}">X</a>
+            <a class="movie-group__delete" href="http://${url}:3000/deleteMovie?id=${movieGroup.id}">X</a>
             <div class="movie-group__id"> ${movieGroup.id}</div>
             <ul>
             ${movieGroup.movies.map(movie => {return getMovieMarkup(movie,movieGroup.id)})}
@@ -86,7 +89,7 @@
       };
 
       let showCurrentMovies = () => {
-          $.getJSON( "http://localhost:3000/movies", (movieGroups) => {
+          $.getJSON( "http://" + url + ":3000/movies", (movieGroups) => {
                 let currentMovieContainer = document.getElementById('currentMovies');
 
                 currentMovieContainer.innerHTML = `
@@ -106,7 +109,7 @@
 <body>
     <form ref='uploadForm'
           id='uploadForm'
-          action='http://localhost:3000/upload'
+          action='/upload'
           method='post'
           encType="multipart/form-data">
 
@@ -129,7 +132,7 @@
         </div>
         <button type='submit'>Upload</button>
     </form>
-    <a href="http://localhost:3000/game.html"><button>To the Game</button></a>
+    <a href="/game.html"><button>To the Game</button></a>
     <ul id="currentMovies">
     </ul>
 </body>
