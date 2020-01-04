@@ -28,6 +28,8 @@ let points = {
  */
 let currentMovie = null;
 
+//const url = '173.212.239.184';
+const url = window.location.hostname;
 
 let setStateVisibility = () => {
   Object.keys(states).forEach((state) => {
@@ -78,14 +80,14 @@ let updatePoints = () => {
 let updateMovie = (movie) => {
   currentMovie = movie;
   document.getElementById('movie').innerHTML = movie.title.split('_').join(' ');
-  document.getElementById('image1').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image1 + '.jpg');
-  document.getElementById('image2').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image2 + '.jpg');
-  document.getElementById('image3').setAttribute('src','http://173.212.239.184:3000/images/' + movie.image3 + '.jpg');
+  document.getElementById('image1').setAttribute('src','http://'+ url +':3000/images/' + movie.image1 + '.jpg');
+  document.getElementById('image2').setAttribute('src','http://'+ url +':3000/images/' + movie.image2 + '.jpg');
+  document.getElementById('image3').setAttribute('src','http://'+ url +':3000/images/' + movie.image3 + '.jpg');
   setState(states['TITLE']);
 };
 
 let getNewMovie = () => {
-  $.getJSON( "http://173.212.239.184:3000/getRandomMovie", updateMovie)
+  $.getJSON( 'http://'+ url +':3000/getRandomMovie', updateMovie)
 };
 
 document.addEventListener("DOMContentLoaded", function() {
