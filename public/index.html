@@ -120,6 +120,7 @@
     </script>
 </head>
 <body>
+    <h3>Bitte nur Bilder im JPG Format hochladen. Nicht größer als 2MB! Filmtitel möglichst in Deutsch.</h3>
     <form ref='uploadForm'
           id='uploadForm'
           action='/upload'
@@ -127,19 +128,19 @@
           encType="multipart/form-data">
 
         <div class="form__block">
-            <label for="file1_name">Film A: </label>
+            <label for="file1_name">Titel Film A: </label>
             <input data-validation="required" id="file1_name" type="text" name="file1_name"/>
             <input data-validation-max-size="2000kb" data-validation="required" type="file" name="file1"/>
         </div>
 
         <div class="form__block">
-            <label for="file2_name">Film B: </label>
+            <label for="file2_name">Titel Film B: </label>
             <input id="file2_name" data-validation-depends-on="file2" type="text" name="file2_name"/>
             <input data-validation-max-size="2000kb"  type="file" name="file2"/>
         </div>
 
         <div class="form__block">
-            <label for="file3_name">Film C: </label>
+            <label for="file3_name">Titel Film C: </label>
             <input data-validation-depends-on="file3" id="file3_name" type="text" name="file3_name"/>
             <input data-validation-max-size="2000kb"  type="file" name="file3"/>
         </div>
