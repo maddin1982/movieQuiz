@@ -94,38 +94,53 @@ app.get('/deleteMovie', function(req, res) {
 
 app.get('/getRandomMovie', function(req,res){
   //const movieGroups_length = db.get('movies').size().value();
-  let movie = getRandomMovieGroup([]);
+  let randomImageGroup = getRandomMovieGroup([]);
+  let imageGroupId1 = randomImageGroup.id;
+  let imageGroupId2 = randomImageGroup.id;
+  let imageGroupId3 = randomImageGroup.id;
+
 
   // try to set all 3 movies from first moviegroup
-  let image1 = movie.movies[0];
-  let image2 = movie.movies[1];
-  let image3 = movie.movies[2];
+  let image1 = randomImageGroup.movies[0];
+  let image2 = randomImageGroup.movies[1];
+  let image3 = randomImageGroup.movies[2];
 
-  let imageGroupId1 = movie.id;
-  let imageGroupId2 = movie.id;
-  let imageGroupId3 = movie.id;
-
-  // in case second movie is not set
-  if(image2 === undefined){
-    let randomImageGroup = getRandomMovieGroup([imageGroupId1]);
-    image2 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
-    imageGroupId2 = randomImageGroup.id;
+  if(image2){
+    //randomly switch movie 1 and 2
+    if(Math.random()> 0.4) {
+      let temp = image1;
+      image1= image2;
+      image2 = temp;
+    }
+  } else {
+      // in case second movie is not set get new random movie group
+      let randomImageGroup = getRandomMovieGroup([imageGroupId1]);
+      // pick random movie from the random group
+      image2 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
+      imageGroupId2 = randomImageGroup.id;
   }
 
-  // in case third movie is not set
-  if(image3 === undefined){
+
+  if(image3){
+    //randomly switch movie 2 and 3
+    if(Math.random()> 0.4) {
+      let temp = image2;
+      image2= image3;
+      image3 = temp;
+    }
+  } else {
+    // in case third movie is not set get new random movie group
     let randomImageGroup = getRandomMovieGroup([imageGroupId1,imageGroupId2]);
+    // pick random movie from the random group
     image3 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
     imageGroupId3 = randomImageGroup.id;
   }
 
-  //todo: mix this up so that movie 1 isn't always the right one
-
-  // get random number between 1 and 3
+  // get random number between 1 and 3 to mix selected movies so that movie 1 isn't always the right one
   let rand = Math.floor(Math.random()*3) + 1;
 
   let movieJson =  {
-    'title' : movie.movies[0],
+    'title' : image1,
     'answer' : rand
   };
 

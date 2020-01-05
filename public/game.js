@@ -8,7 +8,7 @@
  * @property {Number} answer - the correct image
  */
 
-const winningPoints = 3;
+const winningPoints = 5;
 
 const states = {
   'START': 1,
