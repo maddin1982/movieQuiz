@@ -30,6 +30,27 @@
             margin: 0;
             padding:0;
         }
+        .fixed {
+            position: fixed;
+            z-index: 99999;
+            background: white;
+            width: 100%;
+            top: 0;
+            left: 0;
+            padding: 10px;
+            box-shadow: 0 -10px 50px -10px #000;
+        }
+
+        .floatRightTop{
+            position: absolute;
+            right:25px;
+            top:0;
+        }
+
+        #currentMovies{
+            margin-top: 280px;
+        }
+
         .movie-group{
             margin: 10px;
             background: #eee;
@@ -40,15 +61,27 @@
             width:100%;
             padding: 0 0 10px;
         }
-        .movie-group__delete {
-            margin-right:4px;
+
+        .movie-group__button {
             position: absolute;
             right:0;
             background-color: red;
             color:white;
-            padding: 4px;
-            margin-top: -15px;
             border-radius: 5px;
+            padding: 4px;
+            margin-right:4px;
+            cursor:pointer;
+        }
+
+        .movie-group__button--delete {
+            margin-top: -15px;
+            bottom: 0;
+            font-size: 10px;
+            padding:2px;
+
+        }
+        .movie-group__button--edit{
+            margin-top: 15px;
         }
         .movie {
             height: 100px;
@@ -72,28 +105,29 @@
       let getMovieMarkup = (movie,groupId) => {
         return `<li class="movie">
                     <a href="http://${url}:3000/images/${groupId}_${movie}.jpg"><img width="auto" height="100%" src="http://${url}:3000/images/${groupId}_${movie}.jpg"></a>
-                    <span>${movie.split('_').join(' ')}</span>
+                    <span class="movie__title">${movie.split('_').join(' ')}</span>
                 </li>`;
       };
 
       let createAvailableMoviesMarkup = (movieGroup) => {
         return `
         <li class="movie-group">
-            <a class="movie-group__delete" href="http://${url}:3000/deleteMovie?id=${movieGroup.id}">X</a>
+            <div class="movie-group__button movie-group__button--edit" data-id="${movieGroup.id}">edit</div>
+            <a class="movie-group__button movie-group__button--delete" href="http://${url}:3000/deleteMovie?id=${movieGroup.id}">X</a>
             <div class="movie-group__id"> ${movieGroup.id}</div>
             <ul>
-            ${movieGroup.movies.map(movie => {return getMovieMarkup(movie,movieGroup.id)})}
+            ${movieGroup.movies.map(movie => {return getMovieMarkup(movie,movieGroup.id)}).join('')}
             </ul>
         </li>
         `
       };
 
       let showCurrentMovies = () => {
-          $.getJSON( "http://" + url + ":3000/movies", (movieGroups) => {
+         return $.getJSON( "http://" + url + ":3000/movies").success( movieGroups => {
                 let currentMovieContainer = document.getElementById('currentMovies');
 
                 currentMovieContainer.innerHTML = `
-                    ${movieGroups.map(createAvailableMoviesMarkup)}
+                    ${movieGroups.map(createAvailableMoviesMarkup).join('')}
                 `;
           })
       };
@@ -106,11 +140,46 @@
         }
       };
 
+      let clearForm = () => {
+        $('#form__update-id').attr('value', '');
+        $('#form__submit-button').html('Upload');
+        $('#form__first-file').attr('data-validation', 'required');
+        $('#uploadForm').attr('action', '/upload');
+        document.getElementById("uploadForm").reset();
+      };
+
+
+      let editHandler = (e) => {
+        const editEntryId = $(e.target).data('id');
+        const movieTitles = $(e.target).parent().find('.movie__title');
+
+        clearForm();
+        $('#form__submit-button').html('Update');
+        $('#form__update-id').val(editEntryId);
+        $('#uploadForm').attr('action', '/update');
+        $('#form__first-file').attr('data-validation', '');
+
+        const $form = $('#uploadForm');
+        const formTitles = $form.find('.form__title');
+        for(let i = 0; i < movieTitles.length; i++) {
+          formTitles[i].value = movieTitles[i].innerHTML;
+        }
+
+        console.log(movieTitles.length)
+      };
+
       document.addEventListener("DOMContentLoaded", function() {
         $.validate({
           lang: 'de'
         });
-        showCurrentMovies();
+        showCurrentMovies().then(() => {
+          $('.movie-group__button--edit').on('click', editHandler);
+        });
+
+        $('#form__reset-button').on('click', (e)=> {
+          e.preventDefault();
+          clearForm();
+        });
 
         document.getElementById('file1_name').addEventListener('keydown', keyDownOnInputEventHandler);
         document.getElementById('file2_name').addEventListener('keydown', keyDownOnInputEventHandler);
@@ -120,33 +189,36 @@
     </script>
 </head>
 <body>
-    <h3>Bitte nur Bilder im JPG Format hochladen. Nicht größer als 2MB! Filmtitel möglichst in Deutsch.</h3>
-    <form ref='uploadForm'
-          id='uploadForm'
-          action='/upload'
-          method='post'
-          encType="multipart/form-data">
+    <div class="fixed">
+        <div>Bitte nur Bilder im JPG Format hochladen. Nicht größer als 2MB! Filmtitel möglichst in Deutsch.</div>
+        <form ref='uploadForm'
+              id='uploadForm'
+              action='/upload'
+              method='post'
+              encType="multipart/form-data">
+            <input id="form__update-id" type="hidden" name="updateId" value="">
+            <div class="form__block">
+                <label for="file1_name">Titel Film A: </label>
+                <input class='form__title' data-validation="required" id="file1_name" type="text" name="file1_name"/>
+                <input id='form__first-file' data-validation-max-size="2000kb" data-validation="required" type="file" name="file1"/>
+            </div>
 
-        <div class="form__block">
-            <label for="file1_name">Titel Film A: </label>
-            <input data-validation="required" id="file1_name" type="text" name="file1_name"/>
-            <input data-validation-max-size="2000kb" data-validation="required" type="file" name="file1"/>
-        </div>
+            <div class="form__block">
+                <label for="file2_name">Titel Film B: </label>
+                <input class='form__title' id="file2_name" data-validation-depends-on="file2" type="text" name="file2_name"/>
+                <input data-validation-max-size="2000kb"  type="file" name="file2"/>
+            </div>
 
-        <div class="form__block">
-            <label for="file2_name">Titel Film B: </label>
-            <input id="file2_name" data-validation-depends-on="file2" type="text" name="file2_name"/>
-            <input data-validation-max-size="2000kb"  type="file" name="file2"/>
-        </div>
-
-        <div class="form__block">
-            <label for="file3_name">Titel Film C: </label>
-            <input data-validation-depends-on="file3" id="file3_name" type="text" name="file3_name"/>
-            <input data-validation-max-size="2000kb"  type="file" name="file3"/>
-        </div>
-        <button type='submit'>Upload</button>
-    </form>
-    <a href="/game.html"><button>To the Game</button></a>
+            <div class="form__block">
+                <label for="file3_name">Titel Film C: </label>
+                <input class='form__title' data-validation-depends-on="file3" id="file3_name" type="text" name="file3_name"/>
+                <input data-validation-max-size="2000kb"  type="file" name="file3"/>
+            </div>
+            <button id='form__reset-button' type='reset'>Abbrechen</button>
+            <button id='form__submit-button' type='submit'>Upload</button>
+        </form>
+        <a class="floatRightTop" href="/game.html"><button>To the Game</button></a>
+    </div>
     <ul id="currentMovies">
     </ul>
 </body>
