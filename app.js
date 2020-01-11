@@ -52,6 +52,67 @@ app.post('/upload', function(req, res) {
   res.redirect('/');
 });
 
+app.post('/update', function(req, res) {
+  const idToUpdate = req.body.updateId;
+  //loop all possible file names
+
+  const movieGroupSelect = db.get('movies').find((item) => {return item.id == idToUpdate});
+
+  let movieGroup = movieGroupSelect.value();
+  for(let i=0;i<3;i++) {
+
+    // get movie name from upload form
+    let fileName = req.body['file'+(i+1)+'_name'];
+
+
+    if(fileName && fileName !== '') {
+      // rename file
+      const fileNameWithLowdashs = fileName.split(' ').join('_');
+      const from = __dirname + '/images/' + idToUpdate + '_' +movieGroup.movies[i] + '.jpg';
+      const to = __dirname + '/images/' + idToUpdate + '_' +fileNameWithLowdashs + '.jpg';
+
+      const newUploadedFileForThisMovie =  req.files ? req.files['file' + (i+1)] : null;
+
+      if(newUploadedFileForThisMovie) {
+        // delete old movie image
+        if (fs.existsSync(from)) {
+          fs.unlinkSync(from);
+        }
+        // upload new
+        newUploadedFileForThisMovie.mv(to, function(err) {
+          if (err)
+            return res.status(500).send(err);
+        });
+      } else{
+        // just rename movies
+        if (fs.existsSync(from)) {
+          fs.rename(from, to, function (err) {
+            if (err) throw err;
+            console.log('renamed' );
+          });
+        }
+      }
+      movieGroup.movies[i] = fileNameWithLowdashs;
+    } else {
+      // check if there was a db entry and delete it if it existed, also delete the file
+      if(movieGroup.movies[i] !== undefined && movieGroup.movies[i] !== null) {
+        const filetoDelete = __dirname + '/images/' + idToUpdate + '_' + movieGroup.movies[i] + '.jpg';
+        if (fs.existsSync(filetoDelete)) {
+          fs.unlinkSync(filetoDelete);
+        }
+        movieGroup.movies.splice(i,1);
+      }
+    }
+
+  }
+
+  movieGroupSelect
+  .assign(movieGroup)
+  .write();
+
+  res.redirect('/');
+});
+
 
 app.get('/movies', function(req, res) {
   res.json(db.get('movies'));
