@@ -8,6 +8,14 @@
  * @property {Number} answer - the correct image
  */
 
+const ws = new WebSocket(`ws://${location.hostname.split(':')[0]}:40510`);
+
+ws.onmessage = function(event) {
+  if(event.data){
+    console.log('ws data', event.data)
+  }
+};
+
 const winningPoints = 5;
 
 const states = {
