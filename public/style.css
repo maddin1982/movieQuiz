@@ -1,5 +1,5 @@
 body{
-    color: #000;
+    color: rgb(61, 61, 61);
     font-family: Roboto,sans-serif;
     font-size: 16px;
 }
@@ -17,20 +17,69 @@ button {
     background: green;
 }
 
+#bgVideo {
+    position: fixed;
+    right: -10vw;
+    bottom: -10vh;
+    min-width: 120vw;
+    min-height: 120vh;
+}
+.content {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+#phaseLogo{
+    padding-top: 4vh;
+    height: 50vh;
+}
+
+.start-title {
+    display: block;
+    text-align: center;
+    padding: 2rem;
+    font-size: 8rem;
+}
+
+.start-text {
+    display: block;
+    text-align: center;
+    padding: 2rem;
+    font-size: 4rem;
+}
+
 .movie-title {
     display: block;
     text-align: center;
-    padding: 100px;
-    font-size: 80px;
+    padding: 10rem;
+    font-size: 10rem;
+
+}
+.movie-title-small {
+    display: block;
+    text-align: center;
+    padding: 4rem;
+    font-size: 3rem;
 }
 .images {
     display: flex;
-    height: 60%;
+    height: 60vh;
+    width: 92vw;
+    margin-left: 4vw;
 }
 .image{
-    margin: 10px;
+    margin: 2vw;
     flex: 1;
     overflow: hidden;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    background-blend-mode: multiply;
+    background-position: center;
+    background-repeat: no-repeat; 
+    background-size: cover; 
 }
 .points{
     position: absolute;
@@ -43,4 +92,11 @@ button {
 }
 .points_player {
     flex:1;
+}
+
+.score{
+    display: block;
+    text-align: center;
+    padding: 10rem;
+    font-size: 40rem;
 }

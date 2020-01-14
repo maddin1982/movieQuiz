@@ -5,28 +5,39 @@
         <script src="game.js"></script>
     </head>
     <body>
-        <div id="START_state">
-            Filmquiz
-            <button class="start-button">new Game</button>
-        </div>
-        <div id="TITLE_state">
-            <div class="movie-title"><span id="movie"></span></div>
-        </div>
-        <div id="IMAGES_state">
-            <div class="images">
-                <div class="image"><img id="image1"></div>
-                <div class="image"><img id="image2"></div>
-                <div class="image"><img id="image3"></div>
+        <video autoplay muted loop id="bgVideo">
+            <source src="bg.mp4" type="video/mp4">
+        </video>
+        <div class="content">
+            <div id="START_state">
+                <img id="phaseLogo" src="phase4logo.svg" alt="logo">
+                <div class="start-title">Phase4 Filmquiz</div>
+                <div class="start-text">Zum Starten (button) drücken.</div>
+                <button class="start-button">new Game</button>
             </div>
-        </div>
-        <div id="WINNER_state">
-            and the winner is <span id="winner"></span>
-            <button class="start-button">new Game</button>
-        </div>
+            <div id="TITLE_state">
+                <div class="movie-title"><span id="movie"></span></div>
+            </div>
+            <div id="IMAGES_state">
+                <div class="movie-title-small"><span id="movie2"></span></div>
+                <div class="images">
+                    <div class="image" id="image1"></div>
+                    <div class="image" id="image2"></div>
+                    <div class="image" id="image3"></div>
+                </div>
+            </div>
+            <div id="SCORE_state">
+                <div class="score"><span id="score"></span></div>
+            </div>
+            <div id="WINNER_state">
+                and the winner is <span id="winner"></span>
+                <button class="start-button">new Game</button>
+            </div>
 
-        <div class="points">
-            <div class="points_player"> player1: <span id="player1_points"></span></div>
-            <div class="points_player"> player2: <span id="player2_points"></span></div>
+            <div class="points">
+                <div class="points_player"> player1: <span id="player1_points"></span></div>
+                <div class="points_player"> player2: <span id="player2_points"></span></div>
+            </div>
         </div>
     </body>
 </html>
