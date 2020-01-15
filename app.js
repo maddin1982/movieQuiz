@@ -31,7 +31,7 @@ const db = low(adapter);
 
 /*
  * SERIAL PORT
-
+*/
 
 const serialport = new SerialPort("/dev/ttyACM0", {baudRate: 9600});
 const parser = serialport.pipe(new Readline({ delimiter: '\n' }));
@@ -43,7 +43,6 @@ parser.on('data', data =>{
     }
   )
 });
-*/
 
 /*
  * AUTHENTICATION
