@@ -20,7 +20,6 @@ wss.on('connection', function (ws) {
 
 // Require the serialport node module
 const SerialPort = require('serialport');
-const Readline = require('@serialport/parser-readline');
 
 // low db
 const low = require('lowdb');
@@ -33,13 +32,12 @@ const db = low(adapter);
  * SERIAL PORT
 */
 
-const serialport = new SerialPort("/dev/ttyACM0", {baudRate: 9600});
-const parser = serialport.pipe(new Readline({ delimiter: '\n' }));
-parser.on('data', data =>{
-  console.log('got word from arduino:', data);
-
+const serialport = new SerialPort("/dev/ttyUSB0", {baudRate: 9600});
+serialport.on('data', data =>{
+  value = parseInt(data.toString())
+  //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
   wsClients.forEach(wsClient => {
-      wsClient.send(data);
+      wsClient.send(value);
     }
   )
 });
