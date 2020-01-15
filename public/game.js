@@ -12,10 +12,11 @@ const winningPoints = 5;
 
 const states = {
   'START': 1,
-  'TITLE': 2,
-  'IMAGES': 3,
-  'SCORE': 4,
-  'WINNER': 5
+  'INTRO': 2,
+  'TITLE': 3,
+  'IMAGES': 4,
+  'SCORE': 5,
+  'WINNER': 6
 };
 let currentState;
 
@@ -24,7 +25,7 @@ let points = {
   'player2': 0
 };
 
-let nextPointsForPlayer = ""
+let nextPointsForPlayer = "";
 
 /**
  * the current Movie
@@ -58,6 +59,11 @@ let setState = (state) => {
       nextPointsForPlayer = "";
       updatePoints();
       break;
+    case states.INTRO:
+        //setTimeout(() => {
+        //  setState(states.TITLE);
+        //}, 4000);
+        break;
     case states.TITLE:
       // reset image overlay 
       for(i=1;i<=3;++i){
@@ -66,9 +72,8 @@ let setState = (state) => {
         document.getElementById('image' + i).classList.remove("imageHighlightP2");
       }
 
-      setTimeout(() => {
-        setState(states['IMAGES']);
-      }, 2000);
+      proceedCountdown(4);
+
       break;
     case states.SCORE:
       updatePoints();
@@ -113,6 +118,20 @@ let fadeOutImage = (imageId) => {
   document.getElementById('image' + imageId).classList.add("imageFadeout");
 }
 
+let proceedCountdown = (countdown) => {
+  //document.getElementById('countdown').innerHTML = countdown;
+  let timer = setInterval(() =>{
+    countdown--;
+    document.getElementById('countdown').innerHTML = countdown;
+    
+    
+    if(countdown == 0){
+      clearInterval(timer);
+      setState(states['IMAGES']);
+    }
+  },1000);
+}
+
 /**
  * update the dom with new movie
  * @param {Movie} movie - the new movie
@@ -123,7 +142,7 @@ let updateMovie = (movie) => {
   document.getElementById('image1').style.backgroundImage = 'url(http://' + url + ':3000/images/' + movie.image1 + '.jpg)';
   document.getElementById('image2').style.backgroundImage = 'url(http://' + url + ':3000/images/' + movie.image2 + '.jpg)';
   document.getElementById('image3').style.backgroundImage = 'url(http://' + url + ':3000/images/' + movie.image3 + '.jpg)';
-  document.getElementById('movie2').innerHTML = movie.title.split('_').join(' ');
+  //document.getElementById('movie2').innerHTML = movie.title.split('_').join(' ');
   setState(states['TITLE']);
 };
 
