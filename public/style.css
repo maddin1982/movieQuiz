@@ -1,6 +1,11 @@
+@font-face{
+    font-family: 'lmSans-bold';
+    src: url('lmsans10-bold-webfont.woff');
+  }
+
 body{
     color: rgb(61, 61, 61);
-    font-family: Roboto,sans-serif;
+    font-family: lmSans-bold,sans-serif;
     font-size: 16px;
 }
 img {
@@ -40,15 +45,34 @@ button {
 .start-title {
     display: block;
     text-align: center;
-    padding: 2rem;
+    padding: 2.5rem 2.5rem 1rem 2.5rem;
     font-size: 8rem;
 }
 
 .start-text {
     display: block;
     text-align: center;
-    padding: 2rem;
+    padding: 1.3rem;
     font-size: 4rem;
+    animation: start-text-blink 1s ease-in-out infinite;
+    opacity: 1;
+}
+
+@keyframes start-text-blink {
+  0% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 0;
+  }
+  40%{
+      opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .movie-title {
@@ -81,6 +105,16 @@ button {
     background-repeat: no-repeat; 
     background-size: cover; 
 }
+.imageFadeout{
+    background-color : rgb(80,80,80);
+}
+.imageHighlightP1{
+    box-shadow: 0px 0px 20px 20px rgba(255, 38, 0, 0.8)
+}
+.imageHighlightP2{
+    box-shadow: 0px 0px 20px 20px rgba(4, 76, 233, 0.8)
+}
+
 .points{
     position: absolute;
     width: 100%;

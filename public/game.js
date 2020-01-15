@@ -24,11 +24,6 @@ let points = {
   'player2': 0
 };
 
-let playerColors = {
-  'player1': [155, 102, 102],
-  'player2': [155, 0, 200]
-}
-
 let nextPointsForPlayer = ""
 
 /**
@@ -60,13 +55,15 @@ let setState = (state) => {
     case states.START:
       points.player1 = 0;
       points.player2 = 0;
+      nextPointsForPlayer = "";
       updatePoints();
       break;
     case states.TITLE:
       // reset image overlay 
       for(i=1;i<=3;++i){
-        document.getElementById('image' + i).style.backgroundColor = "rgba(0,0,0,0)";
-        document.getElementById('image' + i).style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+        document.getElementById('image' + i).classList.remove("imageFadeout")
+        document.getElementById('image' + i).classList.remove("imageHighlightP1");
+        document.getElementById('image' + i).classList.remove("imageHighlightP2");
       }
 
       setTimeout(() => {
@@ -90,14 +87,14 @@ let setState = (state) => {
  * update points
  */
 let updatePoints = () => {
-  if(nextPointsForPlayer = "player1"){
+  if(nextPointsForPlayer == "player1"){
     points.player1++;
-  }else{
+  }else if (nextPointsForPlayer == "player2"){
     points.player2++
   }
   setTimeout(() => {
-    document.getElementById('player1_points').innerHTML = points.player1;
-    document.getElementById('player2_points').innerHTML = points.player2;
+    //document.getElementById('player1_points').innerHTML = points.player1;
+    //document.getElementById('player2_points').innerHTML = points.player2;
     document.getElementById('score').innerHTML = points.player1 + ":" +points.player2;
   },500);
 };
@@ -105,18 +102,15 @@ let updatePoints = () => {
 /**
  * highlight image
  */
-let highlightImage = (imageId, color) => {
-  document.getElementById('image' + imageId).style.boxShadow =
-   //"0 4px 8px 0 rgba(" + color[0] + ", " + color[1] + ", " + color[2] + " 0.8), 0 6px 20px 0 rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.7);"
-  "0px 0px 20px 20px rgba(" + color[0] + ", " + color[1] + ", " + color[2] +",0.8)";
-   //document.getElementById('image' + imageId).style.backgroundColor = "rgb("+color[0] + ", " + color[1] + ", " + color[2]+")";
+let highlightImage = (imageId, className) => {
+  document.getElementById('image' + imageId).classList.add(className);
 }
 
 /**
  * fade image out
  */
 let fadeOutImage = (imageId) => {
-  document.getElementById('image' + imageId).style.backgroundColor = "rgb(80,80,80)";
+  document.getElementById('image' + imageId).classList.add("imageFadeout");
 }
 
 /**
@@ -174,9 +168,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // color selected image
       if (keyPlayer1 !== -1) {
-        highlightImage(keyPlayer1 + 1, playerColors.player1);
+        highlightImage(keyPlayer1 + 1, "imageHighlightP1");
       } else {
-        highlightImage(keyPlayer2 + 1, playerColors.player2);
+        highlightImage(keyPlayer2 + 1, "imageHighlightP2");
       }
 
       // fade out wrong images
