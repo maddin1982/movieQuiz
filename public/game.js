@@ -11,8 +11,9 @@
 const ws = new WebSocket(`ws://${location.hostname.split(':')[0]}:40510`);
 
 ws.onmessage = function(event) {
-  if(event.data){
-    console.log('ws data', event.data)
+  if(event.data) {
+    console.log('ws data', event.data);
+    pressButton(parseInt(event.data));
   }
 };
 
@@ -98,6 +99,30 @@ let getNewMovie = () => {
   $.getJSON( 'http://'+ url +':3000/getRandomMovie', updateMovie)
 };
 
+/**
+ *
+ * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
+ */
+let pressButton = (buttonId) => {
+  if(buttonId < 4) {
+    // player 1
+    if(buttonId === currentMovie.answer) {
+      points.player1++;
+    }else{
+      points.player2++;
+    }
+  } else{
+    // player 2
+    buttonId -= 3;
+    if(buttonId === currentMovie.answer) {
+      points.player2++;
+    }else{
+      points.player1++;
+    }
+  }
+};
+
+
 document.addEventListener("DOMContentLoaded", function() {
   setState(states.START);
 
@@ -114,31 +139,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // player one hit button
         if(keysPlayer1.indexOf(e.code) !== -1) {
-          if(keysPlayer1.indexOf(e.code) + 1 === currentMovie.answer) {
-            points.player1++;
-          }else{
-            points.player2++;
-          }
+          pressButton(keysPlayer1.indexOf(e.code) + 1);
         }
         else {
           // player two hit button
-          if(keysPlayer2.indexOf(e.code) + 1 === currentMovie.answer) {
-            points.player2++;
-          }
-          else{
-            points.player1++;
+          if(keysPlayer2.indexOf(e.code) !== -1 ) {
+            pressButton(keysPlayer1.indexOf(e.code) + 4);
           }
         }
+
         updatePoints();
         if(points.player1 >= winningPoints || points.player2 >= winningPoints){
           setState(states.WINNER)
         } else{
           getNewMovie();
         }
-
       }
-
-
   });
 
 
