@@ -84,20 +84,22 @@ button {
 .movie-title {
     display: block;
     text-align: center;
-    padding: 10rem;
-    font-size: 4rem;
+    padding-top: 55vh;
+    font-size: 6rem;
 
 }
-
+.countdown-container{
+    margin-top: 10vh;
+}
 #countdown {
     display: block;
     text-align: center;
-    font-size: 20rem;
-    line-height: 23rem;
+    font-size: 23rem;
+    line-height: 26rem;
     
     position: absolute;
-    width: 25rem;
-    height: 25rem;
+    width: 28rem;
+    height: 28rem;
     margin-left: 50%;
 
     transform: translate(-50%,0);
@@ -106,8 +108,54 @@ button {
     border-radius: 50%;
     border-style: double;
 
-    
+    animation: countdown-text-blink 1s ease-in-out infinite;
 }
+
+@keyframes countdown-text-blink {
+    0% {
+      opacity: 1;
+    }
+    30%{
+        opacity: 1;
+    }
+    55% {
+        opacity: 0;
+      }
+  
+    60% {
+      opacity: 1;
+    }
+  }
+
+.countdown-line {
+    display: block;
+    text-align: center;
+    font-size: 20rem;
+    line-height: 23rem;
+    
+    position: absolute;
+    width: 0rem;
+    height: 14rem;
+    margin-left: 50%;
+    margin-top: 16rem;
+
+    transform-origin: top left;
+    transform: translate(-50%,0);
+    
+    border: 2px solid rgb(104, 104, 104);
+    animation: rotation 1s infinite linear;
+
+}
+
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(359deg);
+    }
+  }
+  
 
 .movie-title-small {
     display: block;
@@ -116,6 +164,7 @@ button {
     font-size: 3rem;
 }    
 .images {
+    margin-top: 15vh;
     display: flex;
     height: 60vh;
     width: 92vw;
@@ -158,6 +207,6 @@ button {
 .score{
     display: block;
     text-align: center;
-    padding: 10rem;
+    line-height: 50rem;
     font-size: 40rem;
 }

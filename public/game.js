@@ -72,7 +72,7 @@ let setState = (state) => {
         document.getElementById('image' + i).classList.remove("imageHighlightP2");
       }
 
-      proceedCountdown(4);
+      proceedCountdown(3);
 
       break;
     case states.SCORE:
@@ -80,7 +80,7 @@ let setState = (state) => {
       setTimeout(() => {
         getNewMovie();
         //setState(states['TITLE'])
-      }, 4000);
+      }, 3000);
       break;
     case states.WINNER:
       document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'player 1' : "player 2";
@@ -119,7 +119,7 @@ let fadeOutImage = (imageId) => {
 }
 
 let proceedCountdown = (countdown) => {
-  //document.getElementById('countdown').innerHTML = countdown;
+  document.getElementById('countdown').innerHTML = countdown;
   let timer = setInterval(() =>{
     countdown--;
     document.getElementById('countdown').innerHTML = countdown;
