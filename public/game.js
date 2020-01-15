@@ -72,7 +72,7 @@ let setState = (state) => {
         document.getElementById('image' + i).classList.remove("imageHighlightP2");
       }
 
-      proceedCountdown(3);
+      proceedCountdown(100);
 
       break;
     case states.SCORE:
