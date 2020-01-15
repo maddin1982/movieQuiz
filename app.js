@@ -5,6 +5,46 @@ const fileUpload = require('express-fileupload');
 const app = express();
 const fs = require('fs');
 const basicAuth = require('express-basic-auth');
+const ws = require('ws');
+const WebSocketServer = ws.Server;
+
+const wss = new WebSocketServer({port: 40510});
+
+let wsClients = [];
+
+wss.on('connection', function (ws) {
+  ws.send('testnachricht');
+  wsClients.push(ws);
+});
+
+
+// Require the serialport node module
+const SerialPort = require('serialport');
+
+// low db
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+
+/*
+ * SERIAL PORT
+*/
+
+const serialport = new SerialPort("/dev/ttyUSB0", {baudRate: 9600});
+serialport.on('data', data =>{
+  value = parseInt(data.toString())
+  //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
+  wsClients.forEach(wsClient => {
+      wsClient.send(value);
+    }
+  )
+});
+
+/*
+ * AUTHENTICATION
+ */
 
 app.use(basicAuth({
   users: { 'kazoosh': 'phase4quiz' },
@@ -12,20 +52,18 @@ app.use(basicAuth({
   realm: 'Imb4T3st4pp'
 }));
 
-//todo: check cors
+/*
+ * CORS
+ */
 app.use(cors());
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-
-const adapter = new FileSync('db.json');
-const db = low(adapter);
-//db.defaults({ movies: [] }).write();
-
-
+/*
+ * SERVER AND ROUTES
+ */
 app.use(fileUpload());
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
+
 
 app.post('/upload', function(req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -103,7 +141,6 @@ app.post('/update', function(req, res) {
         movieGroup.movies.splice(i,1);
       }
     }
-
   }
 
   movieGroupSelect
