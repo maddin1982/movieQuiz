@@ -38,14 +38,14 @@ button {
 }
 
 #phaseLogo{
-    padding-top: 4vh;
+    margin-top: 10vh;
     height: 50vh;
 }
 
 .start-title {
     display: block;
     text-align: center;
-    padding: 2.5rem 2.5rem 1rem 2.5rem;
+    padding: 1rem 2.5rem 1rem 2.5rem;
     font-size: 8rem;
 }
 
@@ -59,36 +59,112 @@ button {
 }
 
 @keyframes start-text-blink {
-  0% {
-    opacity: 1;
-  }
-
-  30% {
-    opacity: 0;
-  }
-  40%{
+    0% {
       opacity: 1;
+    }
+  
+    30% {
+      opacity: 0;
+    }
+    40%{
+        opacity: 1;
+    }
+  
+    100% {
+      opacity: 1;
+    }
   }
 
-  100% {
-    opacity: 1;
-  }
+.intro-text {
+    display: block;
+    text-align: center;
+    padding: 1.3rem;
+    font-size: 4rem;
 }
-
 .movie-title {
     display: block;
     text-align: center;
-    padding: 10rem;
-    font-size: 10rem;
+    padding-top: 55vh;
+    font-size: 6rem;
 
 }
+.countdown-container{
+    margin-top: 10vh;
+}
+#countdown {
+    display: block;
+    text-align: center;
+    font-size: 23rem;
+    line-height: 26rem;
+    
+    position: absolute;
+    width: 28rem;
+    height: 28rem;
+    margin-left: 50%;
+
+    transform: translate(-50%,0);
+    
+    border: 30px solid white;
+    border-radius: 50%;
+    border-style: double;
+
+    animation: countdown-text-blink 1s ease-in-out infinite;
+}
+
+@keyframes countdown-text-blink {
+    0% {
+      opacity: 1;
+    }
+    30%{
+        opacity: 1;
+    }
+    55% {
+        opacity: 0;
+      }
+  
+    60% {
+      opacity: 1;
+    }
+  }
+
+.countdown-line {
+    display: block;
+    text-align: center;
+    font-size: 20rem;
+    line-height: 23rem;
+    
+    position: absolute;
+    width: 0rem;
+    height: 14rem;
+    margin-left: 50%;
+    margin-top: 16rem;
+
+    transform-origin: top left;
+    transform: translate(-50%,0);
+    
+    border: 2px solid rgb(104, 104, 104);
+    animation: rotation 1s infinite linear;
+
+}
+
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(359deg);
+    }
+  }
+  
+
 .movie-title-small {
     display: block;
     text-align: center;
     padding: 4rem;
     font-size: 3rem;
-}
+}    
 .images {
+    margin-top: 15vh;
     display: flex;
     height: 60vh;
     width: 92vw;
@@ -100,19 +176,19 @@ button {
     overflow: hidden;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-    background-blend-mode: multiply;
+    background-blend-mode: saturation;
     background-position: center;
     background-repeat: no-repeat; 
     background-size: cover; 
 }
 .imageFadeout{
-    background-color : rgb(80,80,80);
+    background-color : rgb(160,160,160,0.8);
 }
 .imageHighlightP1{
-    box-shadow: 0px 0px 20px 20px rgba(255, 38, 0, 0.8)
+    box-shadow: 0px 0px 20px 20px rgba(189, 30, 2, 0.7)
 }
 .imageHighlightP2{
-    box-shadow: 0px 0px 20px 20px rgba(4, 76, 233, 0.8)
+    box-shadow: 0px 0px 20px 20px rgba(2, 57, 177, 0.7)
 }
 
 .points{
@@ -131,6 +207,6 @@ button {
 .score{
     display: block;
     text-align: center;
-    padding: 10rem;
+    line-height: 50rem;
     font-size: 40rem;
 }
