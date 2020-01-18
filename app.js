@@ -5,27 +5,80 @@ const fileUpload = require('express-fileupload');
 const app = express();
 const fs = require('fs');
 const basicAuth = require('express-basic-auth');
+const ws = require('ws');
+const WebSocketServer = ws.Server;
+const SerialPort = require('serialport');
 
-app.use(basicAuth({
-  users: { 'kazoosh': 'phase4quiz' },
-  challenge: true,
-  realm: 'Imb4T3st4pp'
-}));
+const wss = new WebSocketServer({port: 40510});
 
-//todo: check cors
-app.use(cors());
+let wsClients = [];
 
+wss.on('connection', function (ws) {
+  ws.send('testnachricht');
+  wsClients.push(ws);
+});
+
+
+// low db
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
-//db.defaults({ movies: [] }).write();
+
+/*
+ * SERIAL PORT
+*/
+
+const serialport = new SerialPort("COM6", {baudRate: 9600}, false);
+
+serialport.open((err) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  serialport.on('data', data => {
+    let value = parseInt(data.toString());
+    //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
+    wsClients.forEach(wsClient => {
+        wsClient.send(value);
+      }
+    )
+  })
+});
 
 
+// Open errors will be emitted as an error event
+serialport.on('error', function(err) {
+  console.log('Error: ', err.message)
+});
+
+
+/*
+ * AUTHENTICATION
+ */
+const myArgs = process.argv.slice(2);
+if (!myArgs || myArgs[0] !== "noAuth") {
+  app.use(basicAuth({
+    users: {'kazoosh': 'phase4quiz'},
+    challenge: true,
+    realm: 'Imb4T3st4pp'
+  }));
+} else {
+  console.log('run without auth')
+}
+/*
+ * CORS
+ */
+app.use(cors());
+
+/*
+ * SERVER AND ROUTES
+ */
 app.use(fileUpload());
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
+
 
 app.post('/upload', function(req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -49,6 +102,66 @@ app.post('/upload', function(req, res) {
 // Increment count
   db.get('movies').push({'id':lastIndex, 'movies' : movies}).write();
   db.set('lastIndex', lastIndex).write();
+  res.redirect('/');
+});
+
+app.post('/update', function(req, res) {
+  const idToUpdate = req.body.updateId;
+  //loop all possible file names
+
+  const movieGroupSelect = db.get('movies').find((item) => {return item.id == idToUpdate});
+
+  let movieGroup = movieGroupSelect.value();
+  for(let i=0;i<3;i++) {
+
+    // get movie name from upload form
+    let fileName = req.body['file'+(i+1)+'_name'];
+
+
+    if(fileName && fileName !== '') {
+      // rename file
+      const fileNameWithLowdashs = fileName.split(' ').join('_');
+      const from = __dirname + '/images/' + idToUpdate + '_' +movieGroup.movies[i] + '.jpg';
+      const to = __dirname + '/images/' + idToUpdate + '_' +fileNameWithLowdashs + '.jpg';
+
+      const newUploadedFileForThisMovie =  req.files ? req.files['file' + (i+1)] : null;
+
+      if(newUploadedFileForThisMovie) {
+        // delete old movie image
+        if (fs.existsSync(from)) {
+          fs.unlinkSync(from);
+        }
+        // upload new
+        newUploadedFileForThisMovie.mv(to, function(err) {
+          if (err)
+            return res.status(500).send(err);
+        });
+      } else{
+        // just rename movies
+        if (fs.existsSync(from)) {
+          fs.rename(from, to, function (err) {
+            if (err) throw err;
+            console.log('renamed' );
+          });
+        }
+      }
+      movieGroup.movies[i] = fileNameWithLowdashs;
+    } else {
+      // check if there was a db entry and delete it if it existed, also delete the file
+      if(movieGroup.movies[i] !== undefined && movieGroup.movies[i] !== null) {
+        const filetoDelete = __dirname + '/images/' + idToUpdate + '_' + movieGroup.movies[i] + '.jpg';
+        if (fs.existsSync(filetoDelete)) {
+          fs.unlinkSync(filetoDelete);
+        }
+        movieGroup.movies.splice(i,1);
+      }
+    }
+  }
+
+  movieGroupSelect
+  .assign(movieGroup)
+  .write();
+
   res.redirect('/');
 });
 

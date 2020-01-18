@@ -8,6 +8,15 @@
  * @property {Number} answer - the correct image
  */
 
+const ws = new WebSocket(`ws://${location.hostname.split(':')[0]}:40510`);
+
+ws.onmessage = function(event) {
+  if(event.data) {
+    console.log('ws data', event.data);
+    pressButton(parseInt(event.data));
+  }
+};
+
 const winningPoints = 5;
 
 const states = {
@@ -137,7 +146,7 @@ let proceedCountdown = (countdown) => {
  * @param {Movie} movie - the new movie
  */
 let updateMovie = (movie) => {
-  currentMovie = movie;80
+  currentMovie = movie;
   document.getElementById('movie').innerHTML = movie.title.split('_').join(' ');
   document.getElementById('image1').style.backgroundImage = 'url(http://' + url + ':3000/images/' + movie.image1 + '.jpg)';
   document.getElementById('image2').style.backgroundImage = 'url(http://' + url + ':3000/images/' + movie.image2 + '.jpg)';
@@ -150,7 +159,63 @@ let getNewMovie = () => {
   $.getJSON('http://' + url + ':3000/getRandomMovie', updateMovie)
 };
 
-document.addEventListener("DOMContentLoaded", function () {
+/**
+ *
+ * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
+ */
+let pressButton = (buttonId) => {
+  if (currentState === states.IMAGES) {
+    let player;
+    if (buttonId < 4) {
+      // player 1
+      player = 1;
+      if (buttonId === currentMovie.answer) {
+        nextPointsForPlayer = 'player1';
+      } else {
+        nextPointsForPlayer = 'player2';
+      }
+    } else {
+      // player 2
+      player = 2;
+      buttonId -= 3;
+      if (buttonId === currentMovie.answer) {
+        nextPointsForPlayer = 'player2';
+      } else {
+        nextPointsForPlayer = 'player1';
+      }
+    }
+
+    // color selected image
+    highlightImage(buttonId, "imageHighlightP" + player);
+
+    fadeOutImages();
+  }
+};
+
+fadeOutImages = () => {
+  // fade out wrong images
+  setTimeout(() => {
+    for (i = 1; i < 4; ++i) {
+      if (i != currentMovie.answer) {
+        fadeOutImage(i);
+      }
+    }
+
+    // set next state
+    setTimeout(() => {
+      // player one hit button
+
+      if (points.player1 >= winningPoints || points.player2 >= winningPoints) {
+        setState(states.WINNER);
+      } else {
+        setState(states.SCORE);
+      }
+    },1000);
+  }, 1500);
+};
+
+
+document.addEventListener("DOMContentLoaded", function() {
   setState(states.START);
 
   // stet interactions
@@ -160,64 +225,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }));
 
   document.addEventListener('keypress', (e) => {
-    if (currentState === states.IMAGES) {
-      const keysPlayer1 = ['Digit1', 'Digit2', 'Digit3'];
-      const keysPlayer2 = ['Digit4', 'Digit5', 'Digit6'];
-
-
-      let keyPlayer1 = keysPlayer1.indexOf(e.code);
-      let keyPlayer2 = keysPlayer2.indexOf(e.code);
-
-      if (keysPlayer1.indexOf(e.code) !== -1) {
-        if (keysPlayer1.indexOf(e.code) + 1 === currentMovie.answer) {
-          nextPointsForPlayer = 'player1';
-        } else {
-          nextPointsForPlayer = 'player2';
-        }
-      }
-      else {
-        // player two hit button
-        if (keysPlayer2.indexOf(e.code) + 1 === currentMovie.answer) {
-          nextPointsForPlayer = 'player2';
-        }
-        else {
-          nextPointsForPlayer = 'player1';
-        }
-      }
-
-      // color selected image
-      if (keyPlayer1 !== -1) {
-        highlightImage(keyPlayer1 + 1, "imageHighlightP1");
-      } else {
-        highlightImage(keyPlayer2 + 1, "imageHighlightP2");
-      }
-
-      // fade out wrong images
-      setTimeout(() => {
-        for (i = 1; i < 4; ++i) {
-          if (i != currentMovie.answer) {
-            fadeOutImage(i);
-          }
-        }
-      
-        // set next state
-        setTimeout(() => {
-        // player one hit button
-
-          if (points.player1 >= winningPoints || points.player2 >= winningPoints) {
-            setState(states.WINNER);
-          } else {
-            setState(states.SCORE);
-          }
-        },1000);
-      }, 1500);
-
-
-
-
-    }
-
-
+     const playerKeys = ['Digit1', 'Digit2', 'Digit3','Digit4', 'Digit5', 'Digit6'];
+     pressButton(playerKeys.indexOf(e.code) + 1);
   });
 
 
