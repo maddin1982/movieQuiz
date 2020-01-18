@@ -7,6 +7,7 @@ const fs = require('fs');
 const basicAuth = require('express-basic-auth');
 const ws = require('ws');
 const WebSocketServer = ws.Server;
+const SerialPort = require('serialport');
 
 const wss = new WebSocketServer({port: 40510});
 
@@ -17,9 +18,6 @@ wss.on('connection', function (ws) {
   wsClients.push(ws);
 });
 
-
-// Require the serialport node module
-const SerialPort = require('serialport');
 
 // low db
 const low = require('lowdb');
@@ -32,26 +30,43 @@ const db = low(adapter);
  * SERIAL PORT
 */
 
-const serialport = new SerialPort("/dev/ttyUSB0", {baudRate: 9600});
-serialport.on('data', data =>{
-  value = parseInt(data.toString())
-  //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
-  wsClients.forEach(wsClient => {
-      wsClient.send(value);
-    }
-  )
+const serialport = new SerialPort("COM6", {baudRate: 9600}, false);
+
+serialport.open((err) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  serialport.on('data', data => {
+    let value = parseInt(data.toString());
+    //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
+    wsClients.forEach(wsClient => {
+        wsClient.send(value);
+      }
+    )
+  })
 });
+
+
+// Open errors will be emitted as an error event
+serialport.on('error', function(err) {
+  console.log('Error: ', err.message)
+});
+
 
 /*
  * AUTHENTICATION
  */
-
-app.use(basicAuth({
-  users: { 'kazoosh': 'phase4quiz' },
-  challenge: true,
-  realm: 'Imb4T3st4pp'
-}));
-
+const myArgs = process.argv.slice(2);
+if (!myArgs || myArgs[0] !== "noAuth") {
+  app.use(basicAuth({
+    users: {'kazoosh': 'phase4quiz'},
+    challenge: true,
+    realm: 'Imb4T3st4pp'
+  }));
+} else {
+  console.log('run without auth')
+}
 /*
  * CORS
  */
