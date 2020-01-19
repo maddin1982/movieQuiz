@@ -99,6 +99,14 @@ let setState = (state) => {
       break;
     case states.WINNER:
       document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'player 1' : "player 2";
+
+      // auto reset to start after 10 seconds
+      setTimeout(()=> {
+        if(currentState === states.WINNER) {
+          setState(states.START);
+        }
+      }, 10000);
+
       break;
   }
 };
@@ -124,14 +132,14 @@ let updatePoints = () => {
  */
 let highlightImage = (imageId, className) => {
   document.getElementById('image' + imageId).classList.add(className);
-}
+};
 
 /**
  * fade image out
  */
 let fadeOutImage = (imageId) => {
   document.getElementById('image' + imageId).classList.add("imageFadeout");
-}
+};
 
 let proceedCountdown = (countdown) => {
   document.getElementById('countdown').innerHTML = countdown;
@@ -140,12 +148,12 @@ let proceedCountdown = (countdown) => {
     document.getElementById('countdown').innerHTML = countdown;
     
     
-    if(countdown == 0){
+    if(countdown === 0){
       clearInterval(timer);
       setState(states['IMAGES']);
     }
   },1000);
-}
+};
 
 /**
  * update the dom with new movie
@@ -170,11 +178,14 @@ let getNewMovie = () => {
  * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
  */
 let pressButton = (buttonId) => {
-  console.log(buttonId)
-  if(currentState === states.START) {
-    if(buttonId === 0) {
+  console.log('pressed button ' + buttonId);
+  if(buttonId === 0) {
+    if (currentState === states.START) {
       // start the game
       getNewMovie();
+    }
+    if (currentState === states.WINNER) {
+      setState(states.START)
     }
   }
 
