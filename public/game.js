@@ -42,6 +42,9 @@ let nextPointsForPlayer = "";
  */
 let currentMovie = null;
 
+
+let allowUserToPressAnswerButton = false;
+
 //const url = '173.212.239.184';
 const url = window.location.hostname;
 
@@ -73,6 +76,9 @@ let setState = (state) => {
         //  setState(states.TITLE);
         //}, 4000);
         break;
+    case states.IMAGES:
+      allowUserToPressAnswerButton = true;
+      break;
     case states.TITLE:
       // reset image overlay 
       for(i=1;i<=3;++i){
@@ -164,7 +170,15 @@ let getNewMovie = () => {
  * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
  */
 let pressButton = (buttonId) => {
-  if (currentState === states.IMAGES) {
+  console.log(buttonId)
+  if(currentState === states.START) {
+    if(buttonId === 0) {
+      // start the game
+      getNewMovie();
+    }
+  }
+
+  if (currentState === states.IMAGES && allowUserToPressAnswerButton && buttonId > 0 && buttonId < 7) {
     let player;
     if (buttonId < 4) {
       // player 1
@@ -184,6 +198,8 @@ let pressButton = (buttonId) => {
         nextPointsForPlayer = 'player1';
       }
     }
+
+    allowUserToPressAnswerButton = false;
 
     // color selected image
     highlightImage(buttonId, "imageHighlightP" + player);
@@ -215,6 +231,7 @@ fadeOutImages = () => {
 };
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
   setState(states.START);
 
@@ -225,8 +242,8 @@ document.addEventListener("DOMContentLoaded", function() {
   }));
 
   document.addEventListener('keypress', (e) => {
-     const playerKeys = ['Digit1', 'Digit2', 'Digit3','Digit4', 'Digit5', 'Digit6'];
-     pressButton(playerKeys.indexOf(e.code) + 1);
+     const playerKeys = ['Digit0', 'Digit1', 'Digit2', 'Digit3','Digit4', 'Digit5', 'Digit6'];
+     pressButton(playerKeys.indexOf(e.code));
   });
 
 
