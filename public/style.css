@@ -3,6 +3,13 @@
     src: url('lmsans10-bold-webfont.woff');
   }
 
+  @font-face {
+    font-family: 'fontello';
+    src: url('fontello.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 body{
     color: rgb(61, 61, 61);
     font-family: lmSans-bold,sans-serif;
@@ -56,6 +63,23 @@ button {
     font-size: 4rem;
     animation: start-text-blink 1s ease-in-out infinite;
     opacity: 1;
+}
+
+.circle-border{
+    width: 1.5rem;
+    height: 1.5rem;
+    padding : 0.4rem 2rem 1.1rem 0.3rem;
+    
+    border: 0.4rem solid  rgb(61, 61, 61);
+    border-radius: 50%;
+}
+
+.intro-title {
+    display: block;
+    text-align: center;
+    margin-top: 20vh;
+    padding: 1rem 2.5rem 1rem 2.5rem;
+    font-size: 8rem;
 }
 
 @keyframes start-text-blink {
@@ -113,16 +137,16 @@ button {
 
 @keyframes countdown-text-blink {
     0% {
-      opacity: 1;
+      opacity: 0;
     }
-    30%{
+    15%{
         opacity: 1;
     }
-    55% {
-        opacity: 0;
+    85% {
+        opacity: 1;
       }
   
-    60% {
+    100% {
       opacity: 1;
     }
   }
@@ -144,6 +168,7 @@ button {
     
     border: 2px solid rgb(104, 104, 104);
     animation: rotation 1s infinite linear;
+    animation-delay: 0.5s;
 
 }
 .countdown-cross-horizontal{
@@ -235,3 +260,67 @@ button {
     line-height: 50rem;
     font-size: 40rem;
 }
+
+.winner-logo{
+    position: fixed;
+    width: 100%;
+    margin-top: 20vh;
+    text-align: center;
+    font-size: 57vh;
+    line-height: 70vh;
+    animation: start-text-blink 1s ease-in-out infinite;
+    opacity: 1;
+}
+
+.winner-top{
+    margin-top: 5vh;
+    position: fixed;
+    width: 100%;
+    font-size: 6rem;
+    text-align: center;
+}
+.winner-bottom{
+    position: fixed;
+    width: 100%;
+    margin-top: 75vh;
+    font-size: 6rem;
+    text-align: center;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+   
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+   
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+   
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+   
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+   
+    /* you can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+   
+    /* Font smoothing. That was taken from TWBS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+   
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+  }
+   
+  .icon-user-pair:before { content: '\e800'; } /* '' */
+  .icon-award:before { content: '\e801'; } /* '' */
