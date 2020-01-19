@@ -74,7 +74,7 @@ let setState = (state) => {
         setTimeout(() => {
           getNewMovie();
           setState(states.TITLE);
-        }, 4000);
+        }, 8);
         break;
     case states.TITLE:
       // reset image overlay 
