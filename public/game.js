@@ -76,6 +76,8 @@ let setState = (state) => {
           setState(states.TITLE);
         }, 4000);
         break;
+    case states.IMAGES:
+      break;
     case states.TITLE:
       // reset image overlay 
       buttonPressed = false;
@@ -130,14 +132,14 @@ let updatePoints = () => {
  */
 let highlightImage = (imageId, className) => {
   document.getElementById('image' + imageId).classList.add(className);
-}
+};
 
 /**
  * fade image out
  */
 let fadeOutImage = (imageId) => {
   document.getElementById('image' + imageId).classList.add("imageFadeout");
-}
+};
 
 let proceedCountdown = (countdown) => {
   document.getElementById('countdown').innerHTML = countdown;
@@ -146,12 +148,12 @@ let proceedCountdown = (countdown) => {
     document.getElementById('countdown').innerHTML = countdown;
     
     
-    if(countdown == 0){
+    if(countdown === 0){
       clearInterval(timer);
       setState(states['IMAGES']);
     }
   },1000);
-}
+};
 
 /**
  * update the dom with new movie
@@ -176,7 +178,18 @@ let getNewMovie = () => {
  * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
  */
 let pressButton = (buttonId) => {
-  if (currentState === states.IMAGES && buttonPressed === false) {
+  console.log('pressed button ' + buttonId);
+  if(buttonId === 0) {
+    if (currentState === states.START) {
+      // start the game
+      getNewMovie();
+    }
+    if (currentState === states.WINNER) {
+      setState(states.START)
+    }
+  }
+
+  if (currentState === states.IMAGES && !buttonPressed && buttonId > 0 && buttonId < 7) {
     let player;
     if (buttonId < 4) {
       // player 1
@@ -223,6 +236,7 @@ fadeOutImages = () => {
 };
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
   setState(states.START);
 
@@ -233,8 +247,8 @@ document.addEventListener("DOMContentLoaded", function() {
   }));
 
   document.addEventListener('keypress', (e) => {
-     const playerKeys = ['Digit1', 'Digit2', 'Digit3','Digit4', 'Digit5', 'Digit6'];
-     pressButton(playerKeys.indexOf(e.code) + 1);
+     const playerKeys = ['Digit0', 'Digit1', 'Digit2', 'Digit3','Digit4', 'Digit5', 'Digit6'];
+     pressButton(playerKeys.indexOf(e.code));
   });
 
 
