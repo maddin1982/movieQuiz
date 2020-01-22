@@ -17,7 +17,7 @@ ws.onmessage = function(event) {
   }
 };
 
-const winningPoints = 1;
+const winningPoints = 10;
 
 const states = {
   'START': 1,
@@ -74,7 +74,7 @@ let setState = (state) => {
         setTimeout(() => {
           getNewMovie();
           setState(states.TITLE);
-        }, 8);
+        }, 8000);
         break;
     case states.IMAGES:
       break;
