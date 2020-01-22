@@ -98,7 +98,7 @@ let setState = (state) => {
         } else {
           getNewMovie();
         }
-      }, 3000);
+      }, 2000);
       break;
     case states.WINNER:
       document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'Player 1' : "Player 2";
