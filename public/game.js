@@ -17,7 +17,7 @@ ws.onmessage = function(event) {
   }
 };
 
-const winningPoints = 5;
+const winningPoints = 10;
 
 const states = {
   'START': 1,
@@ -35,15 +35,13 @@ let points = {
 };
 
 let nextPointsForPlayer = "";
+let buttonPressed = false;
 
 /**
  * the current Movie
  * @type {Movie}
  */
 let currentMovie = null;
-
-
-let allowUserToPressAnswerButton = false;
 
 //const url = '173.212.239.184';
 const url = window.location.hostname;
@@ -66,47 +64,49 @@ let setState = (state) => {
 
   switch (state) {
     case states.START:
+      break;
+    case states.INTRO:
       points.player1 = 0;
       points.player2 = 0;
       nextPointsForPlayer = "";
       updatePoints();
-      break;
-    case states.INTRO:
-        //setTimeout(() => {
-        //  setState(states.TITLE);
-        //}, 4000);
+
+        setTimeout(() => {
+          getNewMovie();
+          setState(states.TITLE);
+        }, 8000);
         break;
     case states.IMAGES:
-      allowUserToPressAnswerButton = true;
       break;
     case states.TITLE:
       // reset image overlay 
+      buttonPressed = false;
       for(i=1;i<=3;++i){
         document.getElementById('image' + i).classList.remove("imageFadeout")
         document.getElementById('image' + i).classList.remove("imageHighlightP1");
         document.getElementById('image' + i).classList.remove("imageHighlightP2");
       }
 
-      proceedCountdown(3);
+      proceedCountdown(5);
 
       break;
     case states.SCORE:
       updatePoints();
       setTimeout(() => {
-        getNewMovie();
-        //setState(states['TITLE'])
+        if (points.player1 >= winningPoints || points.player2 >= winningPoints) {
+          setState(states.WINNER);
+        } else {
+          getNewMovie();
+        }
       }, 3000);
       break;
     case states.WINNER:
-      document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'player 1' : "player 2";
-
-      // auto reset to start after 10 seconds
-      setTimeout(()=> {
-        if(currentState === states.WINNER) {
+      document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'Player 1' : "Player 2";
+      setTimeout(() => {
+        if(currentState == states.WINNER){
           setState(states.START);
-        }
-      }, 10000);
-
+        } 
+      }, 100000);
       break;
   }
 };
@@ -189,7 +189,7 @@ let pressButton = (buttonId) => {
     }
   }
 
-  if (currentState === states.IMAGES && allowUserToPressAnswerButton && buttonId > 0 && buttonId < 7) {
+  if (currentState === states.IMAGES && !buttonPressed && buttonId > 0 && buttonId < 7) {
     let player;
     if (buttonId < 4) {
       // player 1
@@ -210,12 +210,12 @@ let pressButton = (buttonId) => {
       }
     }
 
-    allowUserToPressAnswerButton = false;
-
     // color selected image
     highlightImage(buttonId, "imageHighlightP" + player);
 
     fadeOutImages();
+  
+    buttonPressed = true;
   }
 };
 
@@ -227,16 +227,10 @@ fadeOutImages = () => {
         fadeOutImage(i);
       }
     }
-
     // set next state
     setTimeout(() => {
       // player one hit button
-
-      if (points.player1 >= winningPoints || points.player2 >= winningPoints) {
-        setState(states.WINNER);
-      } else {
-        setState(states.SCORE);
-      }
+      setState(states.SCORE);
     },1000);
   }, 1500);
 };
@@ -248,8 +242,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // stet interactions
   document.querySelectorAll('.start-button').forEach((button) => button.addEventListener('click', () => {
-    setState(states.START);
-    getNewMovie();
+    setState(states.INTRO);
+    
   }));
 
   document.addEventListener('keypress', (e) => {

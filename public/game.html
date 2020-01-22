@@ -11,18 +11,21 @@
         <div class="content">
             <div id="START_state">
                 <img id="phaseLogo" src="phase4logo.svg" alt="logo">
-                <div class="start-title">Phase4 Filmquiz</div>
-                <div class="start-text">Zum Starten (button) drücken.</div>
-                <button class="start-button">new Game</button>
+                <div class="start-title">Phase IV Filmquiz</div>
+                <div class="start-text">Zum Starten <i class="demo-icon icon-user-pair circle-border"></i> drücken.</div>
+                <!--button class="start-button">new Game</button-->
             </div>
             <div id="INTRO_state">
-                <div class="start-title">5 Richtige zum Gewinnen!</div>
-                <div class="intro-text">Die erste Antwort wird gezählt. Antwortest du falsch, bekommt der Gegner die Punkte.</div>
+                <div class="intro-title">10 Richtige zum Gewinnen!</div>
+                <div class="intro-text">Die erste Antwort wird gezählt.<br>
+                    Antwortest du falsch, bekommt der Gegner die Punkte.</div>
                 <div class="intro-text">Und los!</div>
             </div>
             <div id="TITLE_state">
-                
+                <div class="countdown-cross-vertical"></div>
                 <div class="countdown-container">
+                    <div class="countdown-cross-horizontal"></div>
+                    
                     <div class="countdown-line"></div>
                     <div id="countdown"></div>
                 </div>
@@ -40,10 +43,13 @@
                 <div class="score"><span id="score"></span></div>
             </div>
             <div id="WINNER_state">
-                <div class="movie-title"> 
-                    and the winner is <span id="winner"></span>
+                <div class="winner-top"> 
+                    And the winner is </span>
                 </div>
-                <button class="start-button">new Game</button>
+                <div class="demo-icon icon-award winner-logo"></div>
+                <div class="winner-bottom"><span id="winner"></span></div>
+                
+                <!--button class="start-button">new Game</button-->
             </div>
 
             <!--div class="points">
