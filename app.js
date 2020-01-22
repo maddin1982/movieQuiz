@@ -30,7 +30,7 @@ const db = low(adapter);
  * SERIAL PORT
 */
 
-const serialport = new SerialPort("COM6", {baudRate: 9600}, false);
+const serialport = new SerialPort("/dev/ttyACM0", {baudRate: 9600}, false);
 
 serialport.open((err) => {
   if (err) {

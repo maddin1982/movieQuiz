@@ -182,7 +182,8 @@ let pressButton = (buttonId) => {
   if(buttonId === 0) {
     if (currentState === states.START) {
       // start the game
-      getNewMovie();
+      //getNewMovie();
+      setState(states.INTRO);
     }
     if (currentState === states.WINNER) {
       setState(states.START)
