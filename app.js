@@ -7,7 +7,21 @@ const fs = require('fs');
 const basicAuth = require('express-basic-auth');
 const ws = require('ws');
 const WebSocketServer = ws.Server;
-const SerialPort = require('serialport');
+
+var raspi = require('raspi');
+var Serial = require('raspi-serial').Serial;
+raspi.init(() => {
+  var serial = new Serial({ portId: '/dev/ttyACM0', baudRate: 9600 });
+  serial.open(() => {
+    serial.on('data', (data) => {
+      let value = parseInt(data.toString());
+      //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
+      wsClients.forEach(wsClient => {
+          wsClient.send(value);
+      })
+    });
+  });
+});
 
 const wss = new WebSocketServer({port: 40510});
 
@@ -25,33 +39,6 @@ const FileSync = require('lowdb/adapters/FileSync');
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
-
-/*
- * SERIAL PORT
-*/
-
-const serialport = new SerialPort("/dev/ttyACM0", {baudRate: 9600}, false);
-
-serialport.open((err) => {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  serialport.on('data', data => {
-    let value = parseInt(data.toString());
-    //console.log('Data from Arduino:', data, '->', data.toString(), '->', value);
-    wsClients.forEach(wsClient => {
-        wsClient.send(value);
-      }
-    )
-  })
-});
-
-
-// Open errors will be emitted as an error event
-serialport.on('error', function(err) {
-  console.log('Error: ', err.message)
-});
 
 
 /*
