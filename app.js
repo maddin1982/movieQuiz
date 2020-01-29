@@ -40,6 +40,12 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
+let nGroups = db.get('movies').value().length/2;
+let blacklist = [];
+
+/*
+ * SERIAL PORT
+*/
 
 /*
  * AUTHENTICATION
@@ -194,11 +200,12 @@ app.get('/deleteMovie', function(req, res) {
 
 app.get('/getRandomMovie', function(req,res){
   //const movieGroups_length = db.get('movies').size().value();
-  let randomImageGroup = getRandomMovieGroup([]);
+  let randomImageGroup = getRandomMovieGroup(blacklist);
   let imageGroupId1 = randomImageGroup.id;
   let imageGroupId2 = randomImageGroup.id;
   let imageGroupId3 = randomImageGroup.id;
 
+  blacklist.push(randomImageGroup.id);
 
   // try to set all 3 movies from first moviegroup
   let image1 = randomImageGroup.movies[0];
@@ -214,10 +221,12 @@ app.get('/getRandomMovie', function(req,res){
     }
   } else {
       // in case second movie is not set get new random movie group
-      let randomImageGroup = getRandomMovieGroup([imageGroupId1]);
+      let randomImageGroup = getRandomMovieGroup(blacklist);
       // pick random movie from the random group
       image2 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
       imageGroupId2 = randomImageGroup.id;
+
+      blacklist.push(randomImageGroup.id);
   }
 
 
@@ -230,10 +239,16 @@ app.get('/getRandomMovie', function(req,res){
     }
   } else {
     // in case third movie is not set get new random movie group
-    let randomImageGroup = getRandomMovieGroup([imageGroupId1,imageGroupId2]);
+    let randomImageGroup = getRandomMovieGroup(blacklist);
     // pick random movie from the random group
     image3 = randomImageGroup.movies[Math.floor(Math.random()*randomImageGroup.movies.length)];
     imageGroupId3 = randomImageGroup.id;
+
+    blacklist.push(randomImageGroup.id);
+  }
+
+  if(blacklist.length >= nGroups){
+    blacklist = [];
   }
 
   // get random number between 1 and 3 to mix selected movies so that movie 1 isn't always the right one
