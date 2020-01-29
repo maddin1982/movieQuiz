@@ -36,12 +36,25 @@ let points = {
 
 let nextPointsForPlayer = "";
 let buttonPressed = false;
+let lastAnswerCorrect = false;
 
 /**
  * the current Movie
  * @type {Movie}
  */
 let currentMovie = null;
+
+// sound
+let sounds = new Map();
+sounds.set('countdown',new Audio("sound/Beep_Countdown>=1.mp3"));
+sounds.set('countdown2',new Audio("sound/Beep_Countdown>=1.mp3"));
+sounds.set('countdownFirst',new Audio("sound/Beep_Countdown>=1.mp3"));
+sounds.set('countdownLast',new Audio("sound/Beep_Zero.mp3"));
+sounds.set('wrong',new Audio("sound/Buzzer-wrong.mp3"));
+sounds.set('right',new Audio("sound/Buzzer-right.mp3"));
+sounds.set('victory',new Audio("sound/Victory.mp3"));
+sounds.set('click1',new Audio("sound/beep high.mp3"));
+sounds.set('click2',new Audio("sound/beep low.mp3"));
 
 //const url = '173.212.239.184';
 const url = window.location.hostname;
@@ -102,11 +115,12 @@ let setState = (state) => {
       break;
     case states.WINNER:
       document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'Player 1' : "Player 2";
+      sounds.get('victory').play();
       setTimeout(() => {
         if(currentState == states.WINNER){
           setState(states.START);
         } 
-      }, 100000);
+      }, 10000);
       break;
   }
 };
@@ -143,14 +157,21 @@ let fadeOutImage = (imageId) => {
 
 let proceedCountdown = (countdown) => {
   document.getElementById('countdown').innerHTML = countdown;
+  sounds.get('countdownFirst').play();
+
   let timer = setInterval(() =>{
     countdown--;
     document.getElementById('countdown').innerHTML = countdown;
     
     
     if(countdown === 0){
+      sounds.get('countdownLast').play();
       clearInterval(timer);
       setState(states['IMAGES']);
+    }else if(countdown % 2 === 0){
+      sounds.get('countdown').play();
+    }else if(countdown % 2 === 1){
+      sounds.get('countdown2').play();
     }
   },1000);
 };
@@ -191,22 +212,29 @@ let pressButton = (buttonId) => {
   }
 
   if (currentState === states.IMAGES && !buttonPressed && buttonId > 0 && buttonId < 7) {
+    
     let player;
     if (buttonId < 4) {
       // player 1
+      sounds.get('click1').play();
       player = 1;
       if (buttonId === currentMovie.answer) {
+        lastAnswerCorrect = true;
         nextPointsForPlayer = 'player1';
       } else {
         nextPointsForPlayer = 'player2';
+        lastAnswerCorrect = false;
       }
     } else {
       // player 2
+      sounds.get('click2').play();
       player = 2;
       buttonId -= 3;
       if (buttonId === currentMovie.answer) {
+        lastAnswerCorrect = true;
         nextPointsForPlayer = 'player2';
       } else {
+        lastAnswerCorrect = false;
         nextPointsForPlayer = 'player1';
       }
     }
@@ -227,6 +255,12 @@ fadeOutImages = () => {
       if (i != currentMovie.answer) {
         fadeOutImage(i);
       }
+    }
+    // play sound
+    if(lastAnswerCorrect){
+      sounds.get('right').play();
+    }else{
+      sounds.get('wrong').play();
     }
     // set next state
     setTimeout(() => {
