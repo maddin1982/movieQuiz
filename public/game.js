@@ -306,14 +306,6 @@ document.addEventListener("DOMContentLoaded", function() {
      pressButton(playerKeys.indexOf(e.code));
   });
 
-  setInterval(()=> {
-    pressButton(0);
-  },1000);
-
-  setInterval(()=> {
-    pressButton(1);
-  },1000);
-
   setInterval(()=>{
     lastButtonAction += 1;
     if (lastButtonAction >= maxIdleTime){
