@@ -17,7 +17,7 @@ ws.onmessage = function(event) {
   }
 };
 
-const winningPoints = 10;
+const winningPoints = 6;
 
 const states = {
   'START': 1,
@@ -37,6 +37,8 @@ let points = {
 let nextPointsForPlayer = "";
 let buttonPressed = false;
 let lastAnswerCorrect = false;
+let lastButtonAction = 0;
+let maxIdleTime = 180;
 
 /**
  * the current Movie
@@ -45,6 +47,7 @@ let lastAnswerCorrect = false;
 let currentMovie = null;
 
 // sound
+/*
 let sounds = new Map();
 sounds.set('countdown',new Audio("sound/Beep_Countdown>=1.mp3"));
 sounds.set('countdown2',new Audio("sound/Beep_Countdown>=1.mp3"));
@@ -55,6 +58,18 @@ sounds.set('right',new Audio("sound/Buzzer-right.mp3"));
 sounds.set('victory',new Audio("sound/Victory.mp3"));
 sounds.set('click1',new Audio("sound/beep high.mp3"));
 sounds.set('click2',new Audio("sound/beep low.mp3"));
+*/
+let sounds = {
+  'countdown' : new Audio("sound/Beep_Countdown>=1.mp3"),
+  'countdown2': new Audio("sound/Beep_Countdown>=1.mp3"),
+'countdownFirst': new Audio("sound/Beep_Countdown>=1.mp3"),
+'countdownLast': new Audio("sound/Beep_Zero.mp3"),
+'wrong': new Audio("sound/Buzzer-wrong.mp3"),
+'right':new Audio("sound/Buzzer-right.mp3"),
+'victory': new Audio("sound/Victory.mp3"),
+'click1': new Audio("sound/beep high.mp3"),
+'click2': new Audio("sound/beep low.mp3")
+}
 
 //const url = '173.212.239.184';
 const url = window.location.hostname;
@@ -115,7 +130,7 @@ let setState = (state) => {
       break;
     case states.WINNER:
       document.getElementById('winner').innerHTML = points.player1 >= winningPoints ? 'Player 1' : "Player 2";
-      sounds.get('victory').play();
+      sounds['victory'].play();
       setTimeout(() => {
         if(currentState == states.WINNER){
           setState(states.START);
@@ -146,7 +161,7 @@ let updatePoints = () => {
  */
 let highlightImage = (imageId, className) => {
   document.getElementById('image' + imageId).classList.add(className);
-};
+};https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
 
 /**
  * fade image out
@@ -157,7 +172,7 @@ let fadeOutImage = (imageId) => {
 
 let proceedCountdown = (countdown) => {
   document.getElementById('countdown').innerHTML = countdown;
-  sounds.get('countdownFirst').play();
+  sounds['countdownFirst'].play();
 
   let timer = setInterval(() =>{
     countdown--;
@@ -165,13 +180,13 @@ let proceedCountdown = (countdown) => {
     
     
     if(countdown === 0){
-      sounds.get('countdownLast').play();
+      sounds['countdownLast'].play();
       clearInterval(timer);
       setState(states['IMAGES']);
     }else if(countdown % 2 === 0){
-      sounds.get('countdown').play();
+      sounds['countdown'].play();
     }else if(countdown % 2 === 1){
-      sounds.get('countdown2').play();
+      sounds['countdown2'].play();
     }
   },1000);
 };
@@ -194,11 +209,16 @@ let getNewMovie = () => {
   $.getJSON('http://' + url + ':3000/getRandomMovie', updateMovie)
 };
 
+
+
+
+
 /**
  *
  * @param {int} buttonId - ... between 1 and 6 , 1-3 for player one, 4-6 for player 2
  */
 let pressButton = (buttonId) => {
+  lastButtonAction = 0;
   console.log('pressed button ' + buttonId);
   if(buttonId === 0) {
     if (currentState === states.START) {
@@ -208,7 +228,7 @@ let pressButton = (buttonId) => {
     }
     if (currentState === states.WINNER) {
       setState(states.START)
-    }
+    }https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
   }
 
   if (currentState === states.IMAGES && !buttonPressed && buttonId > 0 && buttonId < 7) {
@@ -216,7 +236,7 @@ let pressButton = (buttonId) => {
     let player;
     if (buttonId < 4) {
       // player 1
-      sounds.get('click1').play();
+      sounds['click1'].play();
       player = 1;
       if (buttonId === currentMovie.answer) {
         lastAnswerCorrect = true;
@@ -227,7 +247,7 @@ let pressButton = (buttonId) => {
       }
     } else {
       // player 2
-      sounds.get('click2').play();
+      sounds['click2'].play();
       player = 2;
       buttonId -= 3;
       if (buttonId === currentMovie.answer) {
@@ -240,7 +260,7 @@ let pressButton = (buttonId) => {
     }
 
     // color selected image
-    highlightImage(buttonId, "imageHighlightP" + player);
+    highlightImage(buttonId, "imageHighlightP" + https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=player);
 
     fadeOutImages();
   
@@ -258,9 +278,9 @@ fadeOutImages = () => {
     }
     // play sound
     if(lastAnswerCorrect){
-      sounds.get('right').play();
+      sounds['right'].play();
     }else{
-      sounds.get('wrong').play();
+      sounds['wrong'].play();
     }
     // set next state
     setTimeout(() => {
@@ -268,7 +288,7 @@ fadeOutImages = () => {
       setState(states.SCORE);
     },1000);
   }, 1500);
-};
+};https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
 
 
 
@@ -286,5 +306,19 @@ document.addEventListener("DOMContentLoaded", function() {
      pressButton(playerKeys.indexOf(e.code));
   });
 
+  setInterval(()=> {
+    pressButton(0);
+  },1000);
+
+  setInterval(()=> {
+    pressButton(1);
+  },1000);
+
+  setInterval(()=>{
+    lastButtonAction += 1;
+    if (lastButtonAction >= maxIdleTime){
+      setState(state.START);
+    }
+  },1000)
 
 });
