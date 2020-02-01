@@ -228,7 +228,7 @@ let pressButton = (buttonId) => {
     }
     if (currentState === states.WINNER) {
       setState(states.START)
-    }https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
+    }
   }
 
   if (currentState === states.IMAGES && !buttonPressed && buttonId > 0 && buttonId < 7) {
@@ -260,7 +260,7 @@ let pressButton = (buttonId) => {
     }
 
     // color selected image
-    highlightImage(buttonId, "imageHighlightP" + https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=player);
+    highlightImage(buttonId, "imageHighlightP" +player);
 
     fadeOutImages();
   
@@ -288,7 +288,7 @@ fadeOutImages = () => {
       setState(states.SCORE);
     },1000);
   }, 1500);
-};https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
+};
 
 
 
