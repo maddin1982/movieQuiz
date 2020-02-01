@@ -161,7 +161,7 @@ let updatePoints = () => {
  */
 let highlightImage = (imageId, className) => {
   document.getElementById('image' + imageId).classList.add(className);
-};https://www.youtube.com/results?search_type=search_videos&search_query=darktable+3&search_sort=relevance&search_category=0&page=
+};
 
 /**
  * fade image out
